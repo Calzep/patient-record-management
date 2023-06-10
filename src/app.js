@@ -152,7 +152,7 @@ const recordOperations = (index) => {
         } else if (userInput.toLowerCase() == modifyRecordCMD){
             modifyRecord(index)
             console.log(patients[index])
-        } else if (userInput.toLowerCase() == exitFunctionCMD){ //FIXME Does not work when called from another function
+        } else if (userInput.toLowerCase() == exitFunctionCMD){
             return exitFunctionCMD
         } else {
             console.log('\nInvalid input!')
