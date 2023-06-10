@@ -151,7 +151,7 @@ const recordOperations = (index) => {
             break
         } else if (userInput.toLowerCase() == modifyRecordCMD){
             modifyRecord(index)
-            break
+            console.log(patients[index])
         } else if (userInput.toLowerCase() == exitFunctionCMD){ //FIXME Does not work when called from another function
             return exitFunctionCMD
         } else {
@@ -194,21 +194,24 @@ const modifyRecord = (index) => {
             return i%2 ? v : v.split(' ')
          })).filter(Boolean);
         //console.log(command)  //for debugging
-
-        if (command[0].toLowerCase() == exitFunctionCMD){
-            recordOperations(index)
+        
+        //Test if the user has entered a valid command
+        if (command[0].toLowerCase() == exitFunctionCMD){   //Exit command
             break
-        } else if (command[0].toLowerCase() == modifyPropertyCMD){
+        } else if (command[0].toLowerCase() == modifyPropertyCMD){  //Modify command
+            //Test if the user has entered a property that exists in the record
             if (patients[index].hasOwnProperty(command[1])){
-                console.log('Has property') 	//for debugging
+                //console.log('Has property') 	//for debugging
+                patients[index][command[1]] = command[2]
+                console.log(`\nSet ${command[1]} to ${patients[index][command[1]]}\n`)
             } else {
                 console.log(`\nError, record has no such property, "${command[1]}"!\n`)
             }
             //console.log('modify selected')    //for debugging
-        } else if (command[0].toLowerCase() == appendToPropertyCMD){
+        } else if (command[0].toLowerCase() == appendToPropertyCMD){    //Append command
             //console.log('append selected')    //for debugging
         } else {
-            console.log(`Error, unknown command, "${command[0]}"!`)
+            console.log(`\nError, unknown command, "${command[0]}"!\n`)
         }
     }
 }
