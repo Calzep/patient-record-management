@@ -1,5 +1,5 @@
 /*Patient Health Record Management System - Proof of Concept
-Version 0.0, 10/06/2023 - Caleb Eason
+Version A.0, 10/06/2023 - Caleb Eason
 
 THIS PROGRAM IS DEPENDANT ON THE SYNCRONOUS READLINE MODULE
 The module has been included in the node_modules file.  To install, use 'npm install'.
@@ -151,8 +151,6 @@ const deleteRecord = (index) => {
         //console.log(patients)   //for debugging
         readlineSync.question("press ENTER to continue")
         recordOperations(index)
-        
-        
     }
 
 }
