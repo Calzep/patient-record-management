@@ -5,10 +5,10 @@ THIS PROGRAM IS DEPENDANT ON THE SYNCRONOUS READLINE MODULE
 The module has been included in the node_modules file.  To install, use 'npm install'.
 If this doesn't work visit 'https://www.npmjs.com/package/readline-sync' to install manually*/
 
-//ANCHOR Packages
+//ANCHOR PACKAGES
 var readlineSync = require('readline-sync');
 
-//ANCHOR Variables and Constants
+//ANCHOR GLOBAL VARIABLES
 
 //Commands
 var exitFunction = 'close'          	//Closes the program, exits record modification
@@ -79,7 +79,7 @@ var patients = [
     },
 ]
 
-//ANCHOR Functions
+//ANCHOR FUNCTIONS
 
 //ANCHOR findRecord
 const findRecord = () => {
@@ -160,10 +160,8 @@ const modifyRecord = (index) => {
     console.log('called modifyRecord')
 }
 
-//ANCHOR endProgram
 
-
-//ANCHOR Main
+//ANCHOR MAIN
 const main = () => {
     //Console.clear is not supported in node so this is the next best thing.
     console.log('\n'.repeat(100))
