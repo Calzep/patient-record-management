@@ -199,8 +199,12 @@ const modifyRecord = (index) => {
         if (command[0].toLowerCase() == exitFunctionCMD){   //Exit command
             break
         } else if (command[0].toLowerCase() == modifyPropertyCMD){  //Modify command
+            //Test if the user has entered a new value
+            if (command[2] == undefined) {
+                console.log("\nError, missing argument <new value>\n!")
+            }
             //Test if the user has entered a property that exists in the record
-            if (patients[index].hasOwnProperty(command[1])){
+            else if (patients[index].hasOwnProperty(command[1])){
                 //Prevent the user from changing patient number
                 if (command[1] == 'patientNumber'){
                     console.log("\nPatient number can not be modified\n")
@@ -214,8 +218,12 @@ const modifyRecord = (index) => {
                 console.log(`\nError, record has no such property, "${command[1]}"!\n`)
             }
         } else if (command[0].toLowerCase() == appendToPropertyCMD){    //Append command
+            //Test if the user has entered a new value
+            if (command[2]== undefined) {
+                console.log("\nError, missing argument <new value>\n!")
+            }
             //Test if the user has entered a property that exists in the record
-            if (patients[index].hasOwnProperty(command[1])){
+            else if (patients[index].hasOwnProperty(command[1])){
                 //Test if the selected property is an array
                 if (typeof(patients[index][command[1]]) == 'object'){
                     patients[index][command[1]].push(command[2])
@@ -228,7 +236,6 @@ const modifyRecord = (index) => {
             }
         } else {
             console.log(`\nError, unknown command, "${command[0]}"!\n`)
-            console.log(ModificationInstructions)
         }
     }
 }
