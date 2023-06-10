@@ -181,11 +181,11 @@ const main = () => {
     while (true){
         //console.log(patients) //for debugging
         console.log('\n'.repeat(100))
-        index = findRecord()
+        let index = findRecord()
         if (index === exitFunction){
             break
         }
-        state = recordOperations(index)
+        let state = recordOperations(index)
         if (state === exitFunction){
             break
         }
