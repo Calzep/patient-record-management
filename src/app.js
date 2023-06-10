@@ -141,7 +141,7 @@ const recordOperations = (index) => {
         - To look up another record, enter:     ${findRecordCMD}
         - To delete this record, enter:         ${deleteRecordCMD}
         - To modify this record, enter:         ${modifyRecordCMD}
-        - To exit the program, enter:           ${exitFunctionCMD}`)
+        - To exit the program, enter:           ${exitFunctionCMD}\n`)
         let userInput = readlineSync.question(">")
 
         if (userInput.toLowerCase() == findRecordCMD){
@@ -201,17 +201,34 @@ const modifyRecord = (index) => {
         } else if (command[0].toLowerCase() == modifyPropertyCMD){  //Modify command
             //Test if the user has entered a property that exists in the record
             if (patients[index].hasOwnProperty(command[1])){
-                //console.log('Has property') 	//for debugging
-                patients[index][command[1]] = command[2]
-                console.log(`\nSet ${command[1]} to ${patients[index][command[1]]}\n`)
+                //Prevent the user from changing patient number
+                if (command[1] == 'patientNumber'){
+                    console.log("\nPatient number can not be modified\n")
+                } else if (command[1] == 'appointments'){
+                    console.log("\nAppointments can not be modified, use 'append' to add a new appointment\n")
+                } else {
+                    patients[index][command[1]] = command[2]
+                    console.log(`\nSet ${command[1]} to "${patients[index][command[1]]}".\n`)
+                }
             } else {
                 console.log(`\nError, record has no such property, "${command[1]}"!\n`)
             }
-            //console.log('modify selected')    //for debugging
         } else if (command[0].toLowerCase() == appendToPropertyCMD){    //Append command
-            //console.log('append selected')    //for debugging
+            //Test if the user has entered a property that exists in the record
+            if (patients[index].hasOwnProperty(command[1])){
+                //Test if the selected property is an array
+                if (typeof(patients[index][command[1]]) == 'object'){
+                    patients[index][command[1]].push(command[2])
+                    console.log(`\n Updated ${command[1]} to include "${command[2]}".\n`)
+                } else {
+                    console.log("\nError, append command can only be used on an array!\n")
+                }
+            } else {
+                console.log(`\nError, record has no such property, "${command[1]}"!\n`)
+            }
         } else {
             console.log(`\nError, unknown command, "${command[0]}"!\n`)
+            console.log(ModificationInstructions)
         }
     }
 }
