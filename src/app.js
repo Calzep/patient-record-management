@@ -10,6 +10,12 @@ var readlineSync = require('readline-sync');
 
 //ANCHOR Variables and Constants
 
+//Commands
+var exitFunction = 'close'      //Closes the program, exits record modification
+var modifyProperty = 'modify'   //Modifies the selected property
+var appendToProperty = 'append' //Appends to the selected proprty
+
+//Patient Data
 var patients = [
     {
         patientNumber: 0,
@@ -72,10 +78,33 @@ var patients = [
 //ANCHOR Functions
 
 //ANCHOR findRecord
-const findRecord = () => {}
+const findRecord = () => {
+    console.log('Enter the full name or patient number of the patient you wish to view\n')
+    let userInput = readlineSync.question('>')
+    if (userInput.toLowerCase() === exitFunction){
+        return exitFunction
+    }
+    let index
+    if (!isNaN(userInput)){
+        //console.log('number') //for debugging
+        index = patients.findIndex(x => x.patientNumber == userInput);
+        //console.log(index) //for debugging
 
-//ANCHOR getOperation
-const getOperation = () => {}
+    } else {
+        //console.log('string') //for debugging
+        index = patients.findIndex(x => (x.fullName).toLowerCase() === userInput.toLowerCase());
+        //console.log(index) //for debugging
+    }
+    if (index === -1){
+        console.log(`\nError, patient ${userInput} not found!\n`)
+        findRecord()
+    } else {
+        return index
+    }
+}
+
+//ANCHOR recordOperations
+const recordOperations = () => {}
 
 //ANCHOR deleteRecord
 const deleteRecord = () => {}
@@ -94,8 +123,18 @@ const main = () => {
     All names and information contained in this program is fictional, any similarties to 
     real persons is purely coincidential\n`)
     readlineSync.question('press ENTER to conintue\n>')
-    //console.log(patients) //for debugging
-    let selectedRecord = findRecord()
+    while (true){
+        //console.log(patients) //for debugging
+        console.log('\n'.repeat(100))
+        let index = findRecord()
+        if (index === exitFunction){
+            break
+        }
+        
+    }
+    //Clears the console after the program is finished
+    console.log('\n'.repeat(100))
+    console.log('Exiting program')
 }
 
 main()
