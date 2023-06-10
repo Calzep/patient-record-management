@@ -83,27 +83,27 @@ var patients = [
 
 //ANCHOR findRecord
 const findRecord = () => {
-    console.log('Enter the full name or patient number of the patient you wish to view\n')
-    let userInput = readlineSync.question('>')
-    if (userInput.toLowerCase() === exitFunction){
-        return exitFunction
-    }
-    let index
-    if (!isNaN(userInput)){
-        //console.log('number') //for debugging
-        index = patients.findIndex(x => x.patientNumber == userInput);
-        //console.log(index) //for debugging
-
-    } else {
-        //console.log('string') //for debugging
-        index = patients.findIndex(x => (x.fullName).toLowerCase() === userInput.toLowerCase());
-        //console.log(index) //for debugging
-    }
-    if (index === -1){
-        console.log(`\nError, patient ${userInput} not found!\n`)
-        findRecord()
-    } else {
-        return index
+    while (true) {
+        console.log(`Enter the full name or patient number of the patient you wish to view, or type ${exitFunction} to exit\n`)
+        let userInput = readlineSync.question('>')
+        if (userInput.toLowerCase() === exitFunction){
+            return exitFunction
+        }
+        let index
+        if (!isNaN(userInput)){
+            //console.log('number') //for debugging
+            index = patients.findIndex(x => x.patientNumber == userInput);
+            //console.log(index) //for debugging
+        } else {
+            //console.log('string') //for debugging
+            index = patients.findIndex(x => (x.fullName).toLowerCase() === userInput.toLowerCase());
+            //console.log(index) //for debugging
+        }
+        if (index === -1){
+            console.log(`\nError, patient ${userInput} not found!\n`)
+        } else {
+            return index
+        }
     }
 }
 
@@ -136,12 +136,29 @@ const recordOperations = (index) => {
 }
 
 //ANCHOR deleteRecord
-const deleteRecord = () => {
-    console.log('called deleteRecord')
+const deleteRecord = (index) => {
+    console.log(`\nAre you sure you wish to delete the health record of patient "${patients[index].fullName}" (patient number ${patients[index].patientNumber})?
+    
+    to confirm deletion type "DELETE", enter any other input to cancel deletion\n`)
+    userInput = readlineSync.question(">")
+    if (userInput === 'DELETE'){
+        console.log(`\nDeleted health record of patient "${patients[index].fullName}" (patient number ${patients[index].patientNumber})\n`)
+        patients.splice(index,1)
+        //console.log(patients)   //for debugging
+        readlineSync.question("press ENTER to continue")
+    } else {
+        console.log("\nDeletion cancelled\n")
+        //console.log(patients)   //for debugging
+        readlineSync.question("press ENTER to continue")
+        recordOperations(index)
+        
+        
+    }
+
 }
 
 //ANCHOR modifyRecord
-const modifyRecord = () => {
+const modifyRecord = (index) => {
     console.log('called modifyRecord')
 }
 
@@ -164,11 +181,11 @@ const main = () => {
     while (true){
         //console.log(patients) //for debugging
         console.log('\n'.repeat(100))
-        let index = findRecord()
+        index = findRecord()
         if (index === exitFunction){
             break
         }
-        let state = recordOperations(index)
+        state = recordOperations(index)
         if (state === exitFunction){
             break
         }
