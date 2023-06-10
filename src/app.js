@@ -11,13 +11,38 @@ var readlineSync = require('readline-sync');
 //ANCHOR GLOBAL VARIABLES
 
 //Commands
-var exitFunction = 'close'          	//Closes the program, exits record modification
-var runDeleteRecord = 'delete-record'    //Calls delete record function
-var runModifyRecord = 'modify-record'    //Calls modify record function
-var runFindRecord = 'find-new'     //Calls find  record function
+var exitFunctionCMD = 'close'          	//Closes the program, exits record modification
+var deleteRecordCMD = 'delete-record'    //Calls delete record function
+var modifyRecordCMD = 'modify-record'    //Calls modify record function
+var findRecordCMD = 'find-new'     //Calls find  record function
 
-var modifyProperty = 'modify'           //Modifies the selected property
-var appendToProperty = 'append'         //Appends to the selected proprty
+var modifyPropertyCMD = 'modify'           //Modifies the selected property
+var appendToPropertyCMD = 'append'         //Appends to the selected proprty
+
+//Text outputs
+var ModificationInstructions = `\n\n--Modifying a record--
+    
+To modify a property of the selected record, the following command can be used:
+
+    modify <property name> “<new value>”
+
+<property name> refers to the property in the record to be modified, such as fullName or dateOfBirth.
+Be aware that properties are case sensitive.
+<new value> refers to the value the selected property will be changed to.
+example: modify fullName “john smith” will change the patients name to john smith
+
+To append a new value to a property containing an array, use:
+
+    append <property name> “<new value>”
+
+Use this command to add appointments for a patient
+example: append appointments “check-up, 11/07/2024”
+
+To exit and save changes, use:
+
+    close
+
+Enter a command to proceed.\n`
 
 //Patient Data
 var patients = [
@@ -84,10 +109,10 @@ var patients = [
 //ANCHOR findRecord
 const findRecord = () => {
     while (true) {
-        console.log(`Enter the full name or patient number of the patient you wish to view, or type ${exitFunction} to exit\n`)
+        console.log(`Enter the full name or patient number of the patient you wish to view, or type ${exitFunctionCMD} to exit\n`)
         let userInput = readlineSync.question('>')
-        if (userInput.toLowerCase() === exitFunction){
-            return exitFunction
+        if (userInput.toLowerCase() === exitFunctionCMD){
+            return exitFunctionCMD
         }
         let index
         if (!isNaN(userInput)){
@@ -113,22 +138,22 @@ const recordOperations = (index) => {
     console.log(patients[index])
     while (true){
         console.log(`\n\nSelect an operation:
-        - To look up another record, enter:     ${runFindRecord}
-        - To delete this record, enter:         ${runDeleteRecord}
-        - To modify this record, enter:         ${runModifyRecord}
-        - To exit the program, enter:           ${exitFunction}`)
+        - To look up another record, enter:     ${findRecordCMD}
+        - To delete this record, enter:         ${deleteRecordCMD}
+        - To modify this record, enter:         ${modifyRecordCMD}
+        - To exit the program, enter:           ${exitFunctionCMD}`)
         let userInput = readlineSync.question(">")
 
-        if (userInput.toLowerCase() == runFindRecord){
+        if (userInput.toLowerCase() == findRecordCMD){
             break
-        } else if (userInput.toLowerCase() == runDeleteRecord){
+        } else if (userInput.toLowerCase() == deleteRecordCMD){
             deleteRecord(index)
             break
-        } else if (userInput.toLowerCase() == runModifyRecord){
+        } else if (userInput.toLowerCase() == modifyRecordCMD){
             modifyRecord(index)
             break
-        } else if (userInput.toLowerCase() == exitFunction){
-            return exitFunction
+        } else if (userInput.toLowerCase() == exitFunctionCMD){ //FIXME Does not work when called from another function
+            return exitFunctionCMD
         } else {
             console.log('\nInvalid input!')
         }
@@ -157,7 +182,35 @@ const deleteRecord = (index) => {
 
 //ANCHOR modifyRecord
 const modifyRecord = (index) => {
-    console.log('called modifyRecord')
+    console.log(ModificationInstructions)
+    while (true){
+        userInput = readlineSync.question('>')
+        /*Below method is from stack overflow, posted by user Denys Séguret on 09/09/2013
+        https://stackoverflow.com/questions/18703669/split-string-into-words-with-whitespace-unless-in-between-a-pair-of-double-quota
+
+        This code splits a string where whitespaces are present, but  ignores whitespaces between double quotation marks*/
+
+        var command = [].concat.apply([], userInput.split('"').map(function(v,i){
+            return i%2 ? v : v.split(' ')
+         })).filter(Boolean);
+        //console.log(command)  //for debugging
+
+        if (command[0].toLowerCase() == exitFunctionCMD){
+            recordOperations(index)
+            break
+        } else if (command[0].toLowerCase() == modifyPropertyCMD){
+            if (patients[index].hasOwnProperty(command[1])){
+                console.log('Has property') 	//for debugging
+            } else {
+                console.log(`\nError, record has no such property, "${command[1]}"!\n`)
+            }
+            //console.log('modify selected')    //for debugging
+        } else if (command[0].toLowerCase() == appendToPropertyCMD){
+            //console.log('append selected')    //for debugging
+        } else {
+            console.log(`Error, unknown command, "${command[0]}"!`)
+        }
+    }
 }
 
 
@@ -178,11 +231,11 @@ const main = () => {
         //console.log(patients) //for debugging
         console.log('\n'.repeat(100))
         let index = findRecord()
-        if (index === exitFunction){
+        if (index === exitFunctionCMD){
             break
         }
         let state = recordOperations(index)
-        if (state === exitFunction){
+        if (state === exitFunctionCMD){
             break
         }
     }
