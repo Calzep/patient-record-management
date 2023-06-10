@@ -123,6 +123,8 @@ const main = () => {
     All names and information contained in this program is fictional, any similarties to 
     real persons is purely coincidential\n`)
     readlineSync.question('press ENTER to conintue\n>')
+    
+    //ANCHOR Main loop
     while (true){
         //console.log(patients) //for debugging
         console.log('\n'.repeat(100))
