@@ -11,9 +11,13 @@ var readlineSync = require('readline-sync');
 //ANCHOR Variables and Constants
 
 //Commands
-var exitFunction = 'close'      //Closes the program, exits record modification
-var modifyProperty = 'modify'   //Modifies the selected property
-var appendToProperty = 'append' //Appends to the selected proprty
+var exitFunction = 'close'          	//Closes the program, exits record modification
+var runDeleteRecord = 'delete-record'    //Calls delete record function
+var runModifyRecord = 'modify-record'    //Calls modify record function
+var runFindRecord = 'find-new'     //Calls find  record function
+
+var modifyProperty = 'modify'           //Modifies the selected property
+var appendToProperty = 'append'         //Appends to the selected proprty
 
 //Patient Data
 var patients = [
@@ -104,13 +108,45 @@ const findRecord = () => {
 }
 
 //ANCHOR recordOperations
-const recordOperations = () => {}
+const recordOperations = (index) => {
+    console.log(`\n\nHealth Record for ${patients[index].fullName}.\n`)
+    console.log(patients[index])
+    while (true){
+        console.log(`\n\nSelect an operation:
+        - To look up another record, enter:     ${runFindRecord}
+        - To delete this record, enter:         ${runDeleteRecord}
+        - To modify this record, enter:         ${runModifyRecord}
+        - To exit the program, enter:           ${exitFunction}`)
+        let userInput = readlineSync.question(">")
+
+        if (userInput.toLowerCase() == runFindRecord){
+            break
+        } else if (userInput.toLowerCase() == runDeleteRecord){
+            deleteRecord(index)
+            break
+        } else if (userInput.toLowerCase() == runModifyRecord){
+            modifyRecord(index)
+            break
+        } else if (userInput.toLowerCase() == exitFunction){
+            return exitFunction
+        } else {
+            console.log('\nInvalid input!')
+        }
+    }
+}
 
 //ANCHOR deleteRecord
-const deleteRecord = () => {}
+const deleteRecord = () => {
+    console.log('called deleteRecord')
+}
 
 //ANCHOR modifyRecord
-const modifyRecord = () => {}
+const modifyRecord = () => {
+    console.log('called modifyRecord')
+}
+
+//ANCHOR endProgram
+
 
 //ANCHOR Main
 const main = () => {
@@ -132,7 +168,10 @@ const main = () => {
         if (index === exitFunction){
             break
         }
-        
+        let state = recordOperations(index)
+        if (state === exitFunction){
+            break
+        }
     }
     //Clears the console after the program is finished
     console.log('\n'.repeat(100))
