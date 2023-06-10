@@ -68,6 +68,7 @@ var patients = [
         appointments: ['Crainiotomy 19/10/2023']
     },
 ]
+
 //ANCHOR Functions
 
 //ANCHOR findRecord
@@ -93,8 +94,8 @@ const main = () => {
     All names and information contained in this program is fictional, any similarties to 
     real persons is purely coincidential\n`)
     readlineSync.question('press ENTER to conintue\n>')
-
     //console.log(patients) //for debugging
+    let selectedRecord = findRecord()
 }
 
 main()
