@@ -1,5 +1,5 @@
 /*Patient Health Record Management System - Proof of Concept
-Version A.0, 10/06/2023 - Caleb Eason
+Version 1.0, 10/06/2023 - Caleb Eason
 
 THIS PROGRAM IS DEPENDANT ON THE SYNCRONOUS READLINE MODULE
 The module has been included in the node_modules file.  To install, use 'npm install'.
@@ -137,11 +137,9 @@ const findRecord = () => {
         if (!isNaN(userInput) && userInput.length > 0){
             //If number is entered, search for matching patientNumber
             index = patients.findIndex(x => x.patientNumber == userInput);
-            //console.log(index) //for debugging
         } else {
             //If string is entered, search for matching fullName
             index = patients.findIndex(x => (x.fullName).toLowerCase() === userInput.toLowerCase());
-            //console.log(index) //for debugging
         }
         //Error trapping, If no match is found above, -1 is returned
         if (index === -1){
@@ -194,12 +192,10 @@ const deleteRecord = (index) => {
         //Remove the record, then return to main
         console.log(`\nDeleted health record of patient "${patients[index].fullName}" (patient number ${patients[index].patientNumber})\n`)
         patients.splice(index,1)
-        //console.log(patients)   //for debugging
         readlineSync.question("press ENTER to continue")
     } else {
         //Keep the record and return to recordOperations
         console.log("\nDeletion cancelled\n")
-        //console.log(patients)   //for debugging
         readlineSync.question("press ENTER to continue")
         recordOperations(index)
     }
@@ -217,7 +213,6 @@ const modifyRecord = (index) => {
         var command = [].concat.apply([], userInput.split('"').map(function(v,i){
             return i%2 ? v : v.split(' ')
          })).filter(Boolean);
-        //console.log(command)  //for debugging
         
         //Test the entered command
 
@@ -288,7 +283,6 @@ const main = () => {
     
     //ANCHOR Main loop
     while (true){
-        //console.log(patients) //for debugging
         console.log('\n'.repeat(100))
         //Retrive record selection for findRecord
         let index = findRecord()
