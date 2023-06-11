@@ -134,7 +134,7 @@ const findRecord = () => {
         }
         let index   //Stores the index of the patient record
         //Tests whether the user has entered a number or a string
-        if (!isNaN(userInput)){
+        if (!isNaN(userInput) && userInput.length > 0){
             //If number is entered, search for matching patientNumber
             index = patients.findIndex(x => x.patientNumber == userInput);
             //console.log(index) //for debugging
@@ -219,9 +219,13 @@ const modifyRecord = (index) => {
          })).filter(Boolean);
         //console.log(command)  //for debugging
         
-        //Test if the user has entered a valid command
+        //Test the entered command
+
+        //Empty values handler
+        if (command[0] == undefined){}  //Prevents crash by providing a case for undefined values
+        
         //Exit command
-        if (command[0].toLowerCase() == exitFunctionCMD){
+        else if (command[0].toLowerCase() == exitFunctionCMD){
             //Returns to recordOperations
             break
 
@@ -229,7 +233,7 @@ const modifyRecord = (index) => {
         } else if (command[0].toLowerCase() == modifyPropertyCMD){
             //Ensure the user has not left out an argument
             if (command[2] == undefined) {
-                console.log("\nError, missing argument <new value>\n!")
+                console.log("\nError, missing argument <new value>!\n")
             }
             //Test if the user has entered a property that exists in the record
             else if (patients[index].hasOwnProperty(command[1])){
@@ -251,7 +255,7 @@ const modifyRecord = (index) => {
         } else if (command[0].toLowerCase() == appendToPropertyCMD){
             //Ensure the user has not left out an argument
             if (command[2]== undefined) {
-                console.log("\nError, missing argument <new value>\n!")
+                console.log("\nError, missing argument <new value>!\n")
             }
             //Test if the user has entered a property that exists in the record
             else if (patients[index].hasOwnProperty(command[1])){
@@ -259,7 +263,7 @@ const modifyRecord = (index) => {
                 if (typeof(patients[index][command[1]]) == 'object'){
                     //Append the entered value to the selected property of records
                     patients[index][command[1]].push(command[2])
-                    console.log(`\n Updated ${command[1]} to include "${command[2]}".\n`)
+                    console.log(`\nUpdated ${command[1]} to include "${command[2]}".\n`)
                 } else {
                     console.log("\nError, append command can only be used on an array!\n")
                 }
