@@ -10,7 +10,7 @@ var readlineSync = require('readline-sync');
 
 //ANCHOR GLOBAL VARIABLES
 
-//Commands
+//--Commands--
 var exitFunctionCMD = 'close'          	//Closes the program, exits record modification
 var deleteRecordCMD = 'delete-record'    //Calls delete record function
 var modifyRecordCMD = 'modify-record'    //Calls modify record function
@@ -19,8 +19,25 @@ var findRecordCMD = 'find-new'     //Calls find  record function
 var modifyPropertyCMD = 'modify'           //Modifies the selected property
 var appendToPropertyCMD = 'append'         //Appends to the selected proprty
 
-//Text outputs
-var ModificationInstructions = `\n\n--Modifying a record--
+//--Text outputs--
+
+//Initial welcoming message
+var welcomeMessage = `Welcome to Patient Health Record Management System (Proof of Concept)
+
+This system allows you to easliy view, modify and delete patient records
+    
+All names and information contained in this program is fictional, any similarties to 
+real persons is purely coincidential\n`
+
+//Instructions for performing operations after a record is sellected
+var OperationInstructions = `\n\nSelect an operation:
+- To look up another record, enter:     ${findRecordCMD}
+- To delete this record, enter:         ${deleteRecordCMD}
+- To modify this record, enter:         ${modifyRecordCMD}
+- To exit the program, enter:           ${exitFunctionCMD}\n`
+
+//Instructions for modifying record data
+var ModificationInstructions = `\n\n--Modifying a record--  
     
 To modify a property of the selected record, the following command can be used:
 
@@ -44,7 +61,7 @@ To exit and save changes, use:
 
 Enter a command to proceed.\n`
 
-//Patient Data
+//--Patient Data--
 var patients = [
     {
         patientNumber: 0,
@@ -111,19 +128,22 @@ const findRecord = () => {
     while (true) {
         console.log(`Enter the full name or patient number of the patient you wish to view, or type ${exitFunctionCMD} to exit\n`)
         let userInput = readlineSync.question('>')
+        //Check if close has been entered and end if true
         if (userInput.toLowerCase() === exitFunctionCMD){
             return exitFunctionCMD
         }
-        let index
+        let index   //Stores the index of the patient record
+        //Tests whether the user has entered a number or a string
         if (!isNaN(userInput)){
-            //console.log('number') //for debugging
+            //If number is entered, search for matching patientNumber
             index = patients.findIndex(x => x.patientNumber == userInput);
             //console.log(index) //for debugging
         } else {
-            //console.log('string') //for debugging
+            //If string is entered, search for matching fullName
             index = patients.findIndex(x => (x.fullName).toLowerCase() === userInput.toLowerCase());
             //console.log(index) //for debugging
         }
+        //Error trapping, If no match is found above, -1 is returned
         if (index === -1){
             console.log(`\nError, patient ${userInput} not found!\n`)
         } else {
@@ -136,25 +156,27 @@ const findRecord = () => {
 const recordOperations = (index) => {
     console.log(`\n\nHealth Record for ${patients[index].fullName}.\n`)
     console.log(patients[index])
+    //Input validation loop
     while (true){
-        console.log(`\n\nSelect an operation:
-        - To look up another record, enter:     ${findRecordCMD}
-        - To delete this record, enter:         ${deleteRecordCMD}
-        - To modify this record, enter:         ${modifyRecordCMD}
-        - To exit the program, enter:           ${exitFunctionCMD}\n`)
+        console.log(OperationInstructions)
         let userInput = readlineSync.question(">")
-
+        //Test input
         if (userInput.toLowerCase() == findRecordCMD){
+            //exit to main loop, where upon findRecord will run
             break
         } else if (userInput.toLowerCase() == deleteRecordCMD){
+            //Run deleteRecord, then exit to main loop
             deleteRecord(index)
             break
         } else if (userInput.toLowerCase() == modifyRecordCMD){
+            //Run modify record, then continue, reprinting the modifed record
             modifyRecord(index)
             console.log(patients[index])
         } else if (userInput.toLowerCase() == exitFunctionCMD){
+            //Return to main and end program
             return exitFunctionCMD
         } else {
+            //Error trapping
             console.log('\nInvalid input!')
         }
     }
@@ -162,22 +184,25 @@ const recordOperations = (index) => {
 
 //ANCHOR deleteRecord
 const deleteRecord = (index) => {
+    //Confirm deletion
     console.log(`\nAre you sure you wish to delete the health record of patient "${patients[index].fullName}" (patient number ${patients[index].patientNumber})?
     
     to confirm deletion type "DELETE", enter any other input to cancel deletion\n`)
     userInput = readlineSync.question(">")
+    //Prevents accidental or careless removal of patient data
     if (userInput === 'DELETE'){
+        //Remove the record, then return to main
         console.log(`\nDeleted health record of patient "${patients[index].fullName}" (patient number ${patients[index].patientNumber})\n`)
         patients.splice(index,1)
         //console.log(patients)   //for debugging
         readlineSync.question("press ENTER to continue")
     } else {
+        //Keep the record and return to recordOperations
         console.log("\nDeletion cancelled\n")
         //console.log(patients)   //for debugging
         readlineSync.question("press ENTER to continue")
         recordOperations(index)
     }
-
 }
 
 //ANCHOR modifyRecord
@@ -189,36 +214,42 @@ const modifyRecord = (index) => {
         https://stackoverflow.com/questions/18703669/split-string-into-words-with-whitespace-unless-in-between-a-pair-of-double-quota
 
         This code splits a string where whitespaces are present, but  ignores whitespaces between double quotation marks*/
-
         var command = [].concat.apply([], userInput.split('"').map(function(v,i){
             return i%2 ? v : v.split(' ')
          })).filter(Boolean);
         //console.log(command)  //for debugging
         
         //Test if the user has entered a valid command
-        if (command[0].toLowerCase() == exitFunctionCMD){   //Exit command
+        //Exit command
+        if (command[0].toLowerCase() == exitFunctionCMD){
+            //Returns to recordOperations
             break
-        } else if (command[0].toLowerCase() == modifyPropertyCMD){  //Modify command
-            //Test if the user has entered a new value
+
+        //Modify command
+        } else if (command[0].toLowerCase() == modifyPropertyCMD){
+            //Ensure the user has not left out an argument
             if (command[2] == undefined) {
                 console.log("\nError, missing argument <new value>\n!")
             }
             //Test if the user has entered a property that exists in the record
             else if (patients[index].hasOwnProperty(command[1])){
-                //Prevent the user from changing patient number
+                //Prevent the user from changing patient number, or appointments
                 if (command[1] == 'patientNumber'){
                     console.log("\nPatient number can not be modified\n")
                 } else if (command[1] == 'appointments'){
                     console.log("\nAppointments can not be modified, use 'append' to add a new appointment\n")
                 } else {
+                    //Write the new value to the record
                     patients[index][command[1]] = command[2]
                     console.log(`\nSet ${command[1]} to "${patients[index][command[1]]}".\n`)
                 }
             } else {
                 console.log(`\nError, record has no such property, "${command[1]}"!\n`)
             }
-        } else if (command[0].toLowerCase() == appendToPropertyCMD){    //Append command
-            //Test if the user has entered a new value
+
+        //Append command
+        } else if (command[0].toLowerCase() == appendToPropertyCMD){
+            //Ensure the user has not left out an argument
             if (command[2]== undefined) {
                 console.log("\nError, missing argument <new value>\n!")
             }
@@ -226,6 +257,7 @@ const modifyRecord = (index) => {
             else if (patients[index].hasOwnProperty(command[1])){
                 //Test if the selected property is an array
                 if (typeof(patients[index][command[1]]) == 'object'){
+                    //Append the entered value to the selected property of records
                     patients[index][command[1]].push(command[2])
                     console.log(`\n Updated ${command[1]} to include "${command[2]}".\n`)
                 } else {
@@ -234,34 +266,35 @@ const modifyRecord = (index) => {
             } else {
                 console.log(`\nError, record has no such property, "${command[1]}"!\n`)
             }
+
+        //Incorrect command handler
         } else {
             console.log(`\nError, unknown command, "${command[0]}"!\n`)
         }
     }
 }
 
-
 //ANCHOR MAIN
 const main = () => {
+    //Initialisation
     //Console.clear is not supported in node so this is the next best thing.
     console.log('\n'.repeat(100))
-    console.log(`Welcome to Patient Health Record Management System (Proof of Concept)
-
-    This system allows you to easliy view, modify and delete patient records
-    
-    All names and information contained in this program is fictional, any similarties to 
-    real persons is purely coincidential\n`)
+    console.log(welcomeMessage)
     readlineSync.question('press ENTER to conintue\n>')
     
     //ANCHOR Main loop
     while (true){
         //console.log(patients) //for debugging
         console.log('\n'.repeat(100))
+        //Retrive record selection for findRecord
         let index = findRecord()
+        //Test if close was entered and break loop if true
         if (index === exitFunctionCMD){
             break
         }
         let state = recordOperations(index)
+        //Test if close was entered and break loop if true
+        //A seperate variable is needed to not override index
         if (state === exitFunctionCMD){
             break
         }
